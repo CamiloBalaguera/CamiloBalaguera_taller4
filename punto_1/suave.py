@@ -5,7 +5,6 @@ print("Ingrese el nombre de la imagen a suavizar")
 imagen = input()
 img = plt.imread(imagen)
 img = img[:,:,:3]
-#img = img[:30,:30,:] #Descomente esta linea en caso de querer utilizar los metodos implementados por mi sin demoras al ejecutar.
 X, Y = img.shape[:2]
 pi2 = np.pi * 2
 print("Ingrese el ancho de la gaussiana de suavizado medida en pixeles")
@@ -43,16 +42,15 @@ def invbifourier(array):
 #Creación del Kernel gaussiano
 def gaussian(sig):
 	t = np.linspace(-10, 10, 20)
-	bump = np.exp(-0.1*t**2)
-	bump /= np.trapz(bump) # normalize the integral to 1
-	kernel = bump[:, np.newaxis] * bump[np.newaxis, :]
-	result = np.zeros((X,Y))
-	result[:kernel.shape[0],:kernel.shape[1]] = kernel
-	return result
+	gauss = np.exp(-1*(1/2*sig**2)*t**2)
+	gauss /= np.sum(gauss) # Se normaliza el kernel
+	kernel = gauss[:, np.newaxis] * gauss[np.newaxis, :]
+	gaussiana = np.zeros((X,Y))
+	gaussiana[:kernel.shape[0],:kernel.shape[1]] = kernel
+	return gaussiana
 
 # Transformada de fourier del kernel, que resulta ser una gaussiana
-#kernel_ft = fftpack.fft2(gaussian(Y, X, sigma), shape=img.shape[:2], axes=(0, 1)) # Usando el metodo nativvo de python TT
-kernel_ft = fftpack.fft2(gaussian(sigma), axes=(0, 1))
+kernel_ft = fftpack.fft2(gaussian(sigma), axes=(0, 1)) # Usando el metodo nativvo de python TT
 #kernel_ft = bifourier(gaussian(sigma)) #Usando mi propia implementación. En caso de querer utilizarla, comentar la linea en donde se utiliza el metodo nativo de python, marcadas con un TT,  y descomentar las que utilizan los metodos implementados por mi, marcadas con MM. ATENCION!: No la utilizo porque simplemente nunca se termina de ejecutar cuando lo hago. Se sugiere ejecutar el archivo FourierPROPIA.py para comprobar que los metodos nativos de python y el implementado por mi arroja el mismo resultado. Se dejara la alternativa de utilizar una menor cantidad de datos de una imagen especifica para poder probar esto. Para ello, mire el inicio del codigo. MM
 
 # convolución
@@ -69,7 +67,7 @@ for i in range(X):
 	
 # Se acomoda para que las dimensiones del kernel concuerden con la tercera dimension de la imagen (espectro de colores)
 img2_ft = kernel_ft[:, :, np.newaxis] * img_ft
-img2 = fftpack.ifft2(img2_ft, axes=(0, 1)).real #Metodo nativo. TT
+img2 = fftpack.ifft2(img2_ft, axes=(0, 1)).real #Usando el metodo nativo. TT
 """img21 = invbifourier(img2_ft[:,:,0]).real #Usando mi implementación. MM
 img22 = invbifourier(img2_ft[:,:,1]).real
 img23 = invbifourier(img2_ft[:,:,2]).real
@@ -79,6 +77,7 @@ for i in range(X):
 		img2[i,j,0] = img21[i,j]
 		img2[i,j,1] = img22[i,j]
 		img2[i,j,2] = img23[i,j]"""
+
 # Se acotan los valores al rango esperado
 img2 = np.clip(img2, 0, 1)
 
