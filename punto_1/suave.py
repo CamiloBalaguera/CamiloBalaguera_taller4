@@ -53,7 +53,7 @@ def gaussian(sig):
 kernel_ft = fftpack.fft2(gaussian(sigma), axes=(0, 1)) # Usando el metodo nativvo de python TT
 #kernel_ft = bifourier(gaussian(sigma)) #Usando mi propia implementación. En caso de querer utilizarla, comentar la linea en donde se utiliza el metodo nativo de python, marcadas con un TT,  y descomentar las que utilizan los metodos implementados por mi, marcadas con MM. ATENCION!: No la utilizo porque simplemente nunca se termina de ejecutar cuando lo hago. Se sugiere ejecutar el archivo FourierPROPIA.py para comprobar que los metodos nativos de python y el implementado por mi arroja el mismo resultado. Se dejara la alternativa de utilizar una menor cantidad de datos de una imagen especifica para poder probar esto. Para ello, mire el inicio del codigo. MM
 
-# convolución
+# Fourier de la imagen
 img_ft = fftpack.fft2(img, axes=(0, 1)) #Usando el metodo nativo. TT
 """img_ft1 = bifourier(img[:,:,0]) #Usando mi implementación. MM
 img_ft2 = bifourier(img[:,:,1])
@@ -65,7 +65,7 @@ for i in range(X):
 		img_ft[i,j,1] = img_ft2[i,j]
 		img_ft[i,j,2] = img_ft3[i,j]"""
 	
-# Se acomoda para que las dimensiones del kernel concuerden con la tercera dimension de la imagen (espectro de colores)
+# Se realiza la convolución. Se acomoda para que las dimensiones del kernel concuerden con la tercera dimension de la imagen (espectro de colores)
 img2_ft = kernel_ft[:, :, np.newaxis] * img_ft
 img2 = fftpack.ifft2(img2_ft, axes=(0, 1)).real #Usando el metodo nativo. TT
 """img21 = invbifourier(img2_ft[:,:,0]).real #Usando mi implementación. MM
@@ -86,6 +86,5 @@ plt.figure()
 plt.imshow(img2)
 plt.axis('off')
 plt.grid(False)
-
 plt.savefig("suave.png")
 
