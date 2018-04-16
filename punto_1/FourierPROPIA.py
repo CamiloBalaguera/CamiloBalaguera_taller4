@@ -34,4 +34,4 @@ def invbifourier(array):
 
 print("Implementacion propia","\n" ,bifourier(muestra),"\n", "Metodo nativo de python", "\n",  fftpack.fft2(muestra))
 print("Implementacion propia inversa","\n" ,invbifourier(muestra),"\n", "Metodo nativo de python", "\n",  fftpack.ifft2(muestra))
-print("Diferencia")
+
