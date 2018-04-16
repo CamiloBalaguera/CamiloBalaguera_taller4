@@ -39,14 +39,21 @@ def invbifourier(array):
 			imagen[m, n] = val
 	return np.transpose(imagen)
 
-def lowpassfilter(size):
+"""def lowpassfilter(size):
 	t = np.linspace(-10, 10, 20)
 	gauss = np.exp(-1*(1/2*0.5**2)*t**2)
 	gauss /= np.sum(gauss) # Se normaliza el kernel
 	kernel = gauss[:, np.newaxis] * gauss[np.newaxis, :]
 	gaussiana = np.zeros((X,Y))
 	gaussiana[:kernel.shape[0],:kernel.shape[1]] = kernel
-	return gaussiana
+	return gaussiana"""
+
+def lowpassfilter(size):
+	kernel = np.ones((size, size))
+	kernel /= size**2
+	lowpass = np.zeros((X,Y))
+	lowpass[:kernel.shape[0],:kernel.shape[1]] = kernel
+	return lowpass
 
 
 def highpassfilter(size):
